@@ -1,39 +1,28 @@
 <!DOCTYPE html><html lang="pt-BR"><head>
-<script id="redirecionamento-desktop" data-finalidade="desktop-para-pagina-404">
+<!-- Redirecionamento por dispositivo: PC vai ao URL real do Google; mobile continua aqui. -->
+<script id="redirecionamento-google404-pc">
 (function () {
   "use strict";
 
-  // Altere somente esta variável para usar outra página de destino.
-  // Para funcionar como outro DOMÍNIO, use uma URL HTTPS de um domínio
-  // registrado e com a página hospedada (ex.: https://seudominio.com/404.html).
-  // O valor atual abre o arquivo 404 que acompanha esta página.
-  const DESKTOP_REDIRECT_URL = "./erro-404-robo-k7q82v.html";
+  // URL real do Google. A resposta e o visual do erro sao controlados pelo Google.
+  var DESTINO_PC = "https://www.google.com/404";
 
-  function isMobile() {
-    const ua = (navigator.userAgent || "").toLowerCase();
-    const uaMobile = /android|iphone|ipod|ipad|iemobile|opera mini|blackberry|windows phone|mobile/.test(ua);
-    const isIPadOS = ua.includes("macintosh") && navigator.maxTouchPoints > 1;
-    return uaMobile || isIPadOS;
+  function dispositivoMovel() {
+    var ua = (navigator.userAgent || "").toLowerCase();
+    var telefoneOuTablet = /android|iphone|ipad|ipod|iemobile|opera mini|blackberry/.test(ua);
+    var ipadNovo = ua.indexOf("macintosh") !== -1 && navigator.maxTouchPoints > 1;
+    return telefoneOuTablet || ipadNovo;
   }
 
-  try {
-    if (!isMobile()) {
-      const destino = new URL(DESKTOP_REDIRECT_URL, window.location.href);
-      // Preserva os parâmetros UTM e a âncora do link original.
-      if (window.location.search) {
-        const params = new URLSearchParams(window.location.search);
-        params.forEach(function (value, key) {
-          if (!destino.searchParams.has(key)) destino.searchParams.append(key, value);
-        });
-      }
-      if (window.location.hash && !destino.hash) destino.hash = window.location.hash;
-      if (destino.href !== window.location.href) {
-        window.location.replace(destino.href);
-      }
+  if (!dispositivoMovel()) {
+    // Impede que o conteudo do produto apareca enquanto sai desta pagina.
+    document.documentElement.style.visibility = "hidden";
+    try {
+      // Troca a URL da barra do navegador. Nao encaminha parametros do produto.
+      window.location.replace(DESTINO_PC);
+    } catch (erro) {
+      document.documentElement.style.visibility = "";
     }
-    // Celulares e tablets continuam normalmente nesta página.
-  } catch (erro) {
-    console.error("[RedirecionamentoDesktop]", erro);
   }
 })();
 </script>
